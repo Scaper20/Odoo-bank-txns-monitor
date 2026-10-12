@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.bank.transaction.monitoring</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Transaction Monitoring" name="bank_transaction_monitoring"
+                     groups="bank_transaction_monitoring.group_monitoring_manager">
+                    <block title="Detection Rules" name="btm_rules">
+                        <setting string="High Value Threshold" help="Transactions at or above this amount are flagged for review.">
+                            <field name="btm_high_value_threshold"/>
+                        </setting>
+                        <setting string="High Frequency" help="Flag a customer making more than N transactions within the window.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="btm_velocity_max_count" class="col-lg-5 o_light_label"/>
+                                    <field name="btm_velocity_max_count"/>
+                                </div>
+                                <div class="row">
+                                    <label for="btm_velocity_window_minutes" class="col-lg-5 o_light_label"/>
+                                    <field name="btm_velocity_window_minutes"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Background Processing" name="btm_processing">
+                        <setting string="Batching" help="Records processed and committed per batch, and the time budget of one run.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="btm_batch_size" class="col-lg-5 o_light_label"/>
+                                    <field name="btm_batch_size"/>
+                                </div>
+                                <div class="row">
+                                    <label for="btm_time_budget_seconds" class="col-lg-5 o_light_label"/>
+                                    <field name="btm_time_budget_seconds"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting string="Retries" help="Failed transactions are retried automatically up to this many attempts.">
+                            <field name="btm_max_attempts"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_monitoring_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'bank_transaction_monitoring'}</field>
+    </record>
+</odoo>

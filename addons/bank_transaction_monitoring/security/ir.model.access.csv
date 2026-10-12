@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bank_transaction_user,bank.transaction.user,model_bank_transaction,group_monitoring_user,1,1,1,0
+access_bank_transaction_manager,bank.transaction.manager,model_bank_transaction,group_monitoring_manager,1,1,1,1
+access_bank_transaction_alert_user,bank.transaction.alert.user,model_bank_transaction_alert,group_monitoring_user,1,1,0,0
+access_bank_transaction_alert_manager,bank.transaction.alert.manager,model_bank_transaction_alert,group_monitoring_manager,1,1,1,1
+access_bank_transaction_generate_manager,bank.transaction.generate.manager,model_bank_transaction_generate,group_monitoring_manager,1,1,1,1

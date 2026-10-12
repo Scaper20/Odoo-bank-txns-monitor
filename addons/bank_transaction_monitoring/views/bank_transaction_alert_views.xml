@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_transaction_alert_tree" model="ir.ui.view">
+        <field name="name">bank.transaction.alert.tree</field>
+        <field name="model">bank.transaction.alert</field>
+        <field name="arch" type="xml">
+            <tree create="false" decoration-danger="state == 'new'" decoration-muted="state in ('reviewed', 'dismissed')">
+                <field name="name"/>
+                <field name="create_date" string="Raised On"/>
+                <field name="alert_type" widget="badge"/>
+                <field name="partner_id"/>
+                <field name="transaction_id"/>
+                <field name="transaction_date"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="details" optional="show"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bank_transaction_alert_form" model="ir.ui.view">
+        <field name="name">bank.transaction.alert.form</field>
+        <field name="model">bank.transaction.alert</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <header>
+                    <button name="action_mark_reviewed" type="object" string="Mark Reviewed" class="btn-primary"
+                            invisible="state != 'new'"/>
+                    <button name="action_escalate" type="object" string="Escalate"
+                            invisible="state not in ('new', 'reviewed')"/>
+                    <button name="action_dismiss" type="object" string="Dismiss"
+                            invisible="state != 'new'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="alert_type"/>
+                            <field name="transaction_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="True"/>
+                            <field name="transaction_date"/>
+                            <field name="reviewer_id" invisible="not reviewer_id"/>
+                            <field name="reviewed_on" invisible="not reviewed_on"/>
+                        </group>
+                    </group>
+                    <field name="details"/>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_transaction_alert_search" model="ir.ui.view">
+        <field name="name">bank.transaction.alert.search</field>
+        <field name="model">bank.transaction.alert</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="transaction_id"/>
+                <filter name="new" string="New" domain="[('state', '=', 'new')]"/>
+                <filter name="escalated" string="Escalated" domain="[('state', '=', 'escalated')]"/>
+                <separator/>
+                <filter name="high_value" string="High Value" domain="[('alert_type', '=', 'high_value')]"/>
+                <filter name="high_frequency" string="High Frequency" domain="[('alert_type', '=', 'high_frequency')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'alert_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bank_transaction_alert" model="ir.actions.act_window">
+        <field name="name">Alerts</field>
+        <field name="res_model">bank.transaction.alert</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_bank_transaction_alert_search"/>
+        <field name="context">{'search_default_new': 1}</field>
+    </record>
+</odoo>

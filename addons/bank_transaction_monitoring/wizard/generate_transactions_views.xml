@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_transaction_generate_form" model="ir.ui.view">
+        <field name="name">bank.transaction.generate.form</field>
+        <field name="model">bank.transaction.generate</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">
+                    Creates pending transactions for load testing. They are picked up by the
+                    monitoring scheduled action (or use "Run Monitoring Now" on the transaction list).
+                </p>
+                <group>
+                    <group>
+                        <field name="transaction_count"/>
+                        <field name="customer_count"/>
+                        <field name="spread_hours"/>
+                    </group>
+                    <group>
+                        <field name="high_value_ratio"/>
+                        <field name="burst_customers"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_generate" type="object" string="Generate" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_bank_transaction_generate" model="ir.actions.act_window">
+        <field name="name">Generate Test Transactions</field>
+        <field name="res_model">bank.transaction.generate</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

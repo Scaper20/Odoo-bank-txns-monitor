@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bank_transaction_tree" model="ir.ui.view">
+        <field name="name">bank.transaction.tree</field>
+        <field name="model">bank.transaction</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="state == 'flagged'"
+                  decoration-warning="state == 'failed'"
+                  decoration-success="state in ('processed', 'approved')"
+                  decoration-muted="state == 'rejected'">
+                <header>
+                    <button name="action_run_monitoring" type="object" string="Run Monitoring Now"
+                            display="always" groups="bank_transaction_monitoring.group_monitoring_manager"/>
+                </header>
+                <field name="reference"/>
+                <field name="transaction_date"/>
+                <field name="partner_id"/>
+                <field name="transaction_type"/>
+                <field name="amount" sum="Total"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="is_high_value" optional="show"/>
+                <field name="is_high_frequency" optional="show"/>
+                <field name="attempt_count" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'flagged'"
+                       decoration-warning="state == 'failed'"
+                       decoration-success="state in ('processed', 'approved')"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_bank_transaction_form" model="ir.ui.view">
+        <field name="name">bank.transaction.form</field>
+        <field name="model">bank.transaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'flagged'"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'flagged'"/>
+                    <button name="action_retry" type="object" string="Retry"
+                            invisible="state != 'failed'"
+                            groups="bank_transaction_monitoring.group_monitoring_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,processed,flagged"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_alerts" type="object" class="oe_stat_button" icon="fa-bell"
+                                invisible="alert_count == 0">
+                            <field name="alert_count" widget="statinfo" string="Alerts"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="High Value" bg_color="text-bg-danger"
+                            invisible="not is_high_value"/>
+                    <div class="oe_title">
+                        <h1><field name="reference" readonly="state != 'pending'" placeholder="Bank reference"/></h1>
+                    </div>
+                    <group>
+                        <group string="Transaction">
+                            <field name="partner_id" readonly="state != 'pending'"/>
+                            <field name="transaction_type" readonly="state != 'pending'"/>
+                            <field name="amount" readonly="state != 'pending'"/>
+                            <field name="currency_id" readonly="state != 'pending'" options="{'no_create': True}"/>
+                            <field name="transaction_date" readonly="state != 'pending'"/>
+                        </group>
+                        <group string="Monitoring">
+                            <field name="is_high_value"/>
+                            <field name="is_high_frequency"/>
+                            <field name="processed_on"/>
+                            <field name="attempt_count" invisible="attempt_count == 0"/>
+                            <field name="reviewed_by_id" invisible="not reviewed_by_id"/>
+                            <field name="reviewed_on" invisible="not reviewed_on"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Alerts" name="alerts" invisible="alert_count == 0">
+                            <field name="alert_ids" readonly="True">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="alert_type"/>
+                                    <field name="details"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Review Notes" name="review">
+                            <field name="review_note" placeholder="Reviewer comments..."/>
+                        </page>
+                        <page string="Error" name="error" invisible="not error_message">
+                            <field name="error_message"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_bank_transaction_search" model="ir.ui.view">
+        <field name="name">bank.transaction.search</field>
+        <field name="model">bank.transaction</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference"/>
+                <field name="partner_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="flagged" string="Flagged" domain="[('state', '=', 'flagged')]"/>
+                <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <filter name="processed" string="Processed" domain="[('state', 'in', ('processed', 'approved'))]"/>
+                <separator/>
+                <filter name="high_value" string="High Value" domain="[('is_high_value', '=', True)]"/>
+                <filter name="high_frequency" string="High Frequency" domain="[('is_high_frequency', '=', True)]"/>
+                <separator/>
+                <filter name="filter_date" string="Date" date="transaction_date"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'transaction_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_bank_transaction" model="ir.actions.act_window">
+        <field name="name">Transactions</field>
+        <field name="res_model">bank.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_bank_transaction_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No transactions yet</p>
+            <p>Transactions arrive as <b>Pending</b> and are processed in the background by the
+               monitoring scheduled action.</p>
+        </field>
+    </record>
+
+    <record id="action_bank_transaction_flagged" model="ir.actions.act_window">
+        <field name="name">Review Queue</field>
+        <field name="res_model">bank.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_bank_transaction_search"/>
+        <field name="context">{'search_default_flagged': 1}</field>
+    </record>
+</odoo>

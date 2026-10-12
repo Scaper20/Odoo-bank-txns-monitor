@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_monitoring_root" name="Transaction Monitoring" sequence="40"
+              groups="bank_transaction_monitoring.group_monitoring_user"/>
+
+    <menuitem id="menu_monitoring_transactions" name="Transactions" parent="menu_monitoring_root" sequence="10"/>
+    <menuitem id="menu_monitoring_all_transactions" name="All Transactions" parent="menu_monitoring_transactions"
+              action="action_bank_transaction" sequence="10"/>
+    <menuitem id="menu_monitoring_review_queue" name="Review Queue" parent="menu_monitoring_transactions"
+              action="action_bank_transaction_flagged" sequence="20"/>
+
+    <menuitem id="menu_monitoring_alerts" name="Alerts" parent="menu_monitoring_root"
+              action="action_bank_transaction_alert" sequence="20"/>
+
+    <menuitem id="menu_monitoring_config" name="Configuration" parent="menu_monitoring_root" sequence="90"
+              groups="bank_transaction_monitoring.group_monitoring_manager"/>
+    <menuitem id="menu_monitoring_settings" name="Settings" parent="menu_monitoring_config"
+              action="action_monitoring_settings" sequence="10"/>
+    <menuitem id="menu_monitoring_generate" name="Generate Test Transactions" parent="menu_monitoring_config"
+              action="action_bank_transaction_generate" sequence="20"/>
+</odoo>

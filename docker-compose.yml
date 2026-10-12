@@ -1,0 +1,31 @@
+# Local development / review environment only.
+# The database password below is a throwaway default for a container that is
+# not exposed outside your machine; override it with a .env file if you like.
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  odoo:
+    image: odoo:17.0
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-odoo}
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./config:/etc/odoo
+      - odoo-data:/var/lib/odoo
+
+volumes:
+  db-data:
+  odoo-data:
