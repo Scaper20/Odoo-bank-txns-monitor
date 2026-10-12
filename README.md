@@ -199,10 +199,10 @@ _cron_process_transactions()
 
 | Criteria | Max | Self-rating |
 |---|---|---|
-| Understanding and interpretation of requirements | 5 | |
-| Odoo ORM and model design | 5 | |
-| Python implementation and business logic | 5 | |
-| Scheduled actions and background processing | 5 | |
-| Error handling and data integrity | 5 | |
-| Performance and query optimisation | 5 | |
-| **Total** | **30** | |
+| Understanding and interpretation of requirements | 5 | 5 |
+| Odoo ORM and model design | 5 | 3 |
+| Python implementation and business logic | 5 | 3 |
+| Scheduled actions and background processing | 5 | 4 |
+| Error handling and data integrity | 5 | 3 |
+| Performance and query optimisation | 5 | 3 |
+| **Total** | **30** | 21 |
