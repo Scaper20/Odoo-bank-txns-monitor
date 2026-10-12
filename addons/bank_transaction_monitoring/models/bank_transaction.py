@@ -244,6 +244,7 @@ class BankTransaction(models.Model):
         * ``FOR UPDATE SKIP LOCKED`` lets concurrent runs share the queue
           without ever processing the same row twice.
         """
+        self.flush_model(["state", "attempt_count"])
         self.env.cr.execute(
             """
             SELECT id

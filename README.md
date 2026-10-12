@@ -37,6 +37,10 @@ docker compose run --rm odoo odoo -d btm_test -i bank_transaction_monitoring \
     --test-enable --test-tags /bank_transaction_monitoring --stop-after-init
 ```
 
+Expected result: `0 failed, 0 error(s) of 20 tests`.
+
+> On Windows Git Bash, prefix the command with `MSYS_NO_PATHCONV=1`, otherwise the `/bank_transaction_monitoring` test tag is rewritten into a Windows path and no tests run.
+
 ### Try it with volume
 
 1. Go to **Transaction Monitoring → Configuration → Generate Test Transactions**. Create, for example, 10,000 transactions. The generator includes about 1% high-value transactions and a few customers with deliberate 7-transactions-in-6-minutes bursts.
